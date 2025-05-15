@@ -1,0 +1,68 @@
+/* Estilos para os botões de alternância */
+button {
+  padding: 10px 20px;
+  font-size: 1.2rem; /* Aumenta o tamanho da fonte */
+  margin-right: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #dd0b16; /* Cor de fundo do botão */
+  color: white; /* Cor do texto */
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #dd0b16; /* Cor do botão quando o mouse passa em cima */
+}
+
+button:focus {
+  outline: none;
+}
+
+/* Estilos para os containers das seções */
+section {
+  margin-top: 20px;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Estilos para as listas de projetos e colaboradores */
+app-project-list, app-collaborator-component {
+  margin-top: 20px;
+}
+
+/* Estilos gerais para o conteúdo do componente */
+section h2 {
+  font-size: 1.4rem;
+  color: #333;
+  margin-bottom: 1rem;
+  padding-left: 10px;
+}
+
+/* Tamanho das células das tabelas */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background-color: #fff;
+}
+
+th, td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f1f1f1;
+  color: #444;
+  font-weight: 600;
+}
+
+tr:hover {
+  background-color: #f5f5f5;
+}
