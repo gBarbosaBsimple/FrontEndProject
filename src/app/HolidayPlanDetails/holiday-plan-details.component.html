@@ -1,0 +1,34 @@
+<section class="project-details-section" *ngIf="holidayPlanForm">
+    <h2>HolidayPlan Details</h2>
+  
+    <form [formGroup]="holidayPlanForm" (ngSubmit)="submitEdit()">
+      <div class="details-box">
+        <label>ID:
+          <input type="number" formControlName="id" [disabled]="true" />
+        </label>
+  
+        <label>Collaborator ID:
+          <input type="number" formControlName="collaboratorId" />
+        </label>
+  
+        <div formArrayName="holidayPeriod">
+          <h3>Holiday Periods</h3>
+          <div
+            *ngFor="let period of holidayPeriods.controls; let i = index"
+            [formGroupName]="i"
+          >
+            <label>Start Date:
+              <input type="date" formControlName="initDate" />
+            </label>
+  
+            <label>End Date:
+              <input type="date" formControlName="finalDate" />
+            </label>
+          </div>
+        </div>
+  
+        <!-- Botão fora do *ngFor -->
+        <button type="submit">Save</button>
+      </div>
+    </form>
+  </section>

@@ -1,38 +1,13 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { HolidayPlan } from '../holidayPlanInterface';
-import { Collaborator } from '../collaboratorInterface';
+import { HolidayPlan } from '../Interfaces/holidayPlanInterface';
+import { Collaborator } from '../Interfaces/collaboratorInterface';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-holiday-plan-list',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <section>
-      <h2>Holiday Plan List</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Collaborator ID</th>
-            <th>lenght of Holiday Period</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let holidayPlan of holidayPlanList">
-            <td>{{ holidayPlan.id }}</td>
-            <td>{{ holidayPlan.collaboratorId }}</td>
-            <td>{{ holidayPlan.holidayPeriod.length }}</td>
-            <td>
-              <button (click)="Details(holidayPlan)">Details</button>
-              <button (click)="viewCollaboratorDetails(holidayPlan.collaboratorId)">Details Collaborator</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-  `,
+  templateUrl:'./holiday-plan-list.component.html',
   styleUrls: ['./holiday-plan-list.component.css']
 })
 export class HolidayPlanListComponent {

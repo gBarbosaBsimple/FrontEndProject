@@ -1,52 +1,28 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
-import { Collaborator } from '../collaboratorInterface';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges,effect } from '@angular/core';
+import { Collaborator } from '../Interfaces/collaboratorInterface';
+import { CollaboratorService } from '../Services/collaboratorService';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-collaborator-details',
   imports: [CommonModule,ReactiveFormsModule],
-  template: `
-    <section class="project-details-section" *ngIf="collaboratorForm">
-      <h2>Collaborator Details</h2>
-
-      <form [formGroup]="collaboratorForm" (ngSubmit)="submitEdit()">
-        <div class="details-box">
-          <label>ID:
-            <input type="number" formControlName="id"/>
-          </label>
-
-          <label>userId:
-            <input type="number" formControlName="userId" />
-          </label>
-
-          <label>Start Date:
-            <input type="date" formControlName="initDate" />
-          </label>
-
-          <label>End Date:
-            <input type="date" formControlName="finalDate" />
-          </label>
-
-          <button type="submit">Save</button>
-        </div>
-      </form>
-    </section>
-  `,
+  templateUrl:'./collaborator-details.component.html',
   styleUrls: ['./collaborator-details.component.css']
 })
-export class CollaboratorDetailsComponent implements OnChanges{
-  @Input() collaborator:Collaborator|null=null
-  @Output() collaboratorEdit= new EventEmitter<Collaborator>();
+export class CollaboratorDetailsComponent{
   collaboratorForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
-  //quando sofre alteracoes altera
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['collaborator'] && this.collaborator) {
-      this.buildForm(this.collaborator);
-    }
+  constructor(private fb: FormBuilder,private collaboratorService: CollaboratorService) {
+    effect(() => {
+      const collaborator = this.collaboratorService.getSelectedCollaboratorSignal()();
+      if (collaborator) {
+        this.buildForm(collaborator);
+      }
+    });
   }
+  //quando sofre alteracoes altera
+  
   //criação do formulario reativo
   private buildForm(collaborator: Collaborator) {
     this.collaboratorForm = this.fb.group({
@@ -67,8 +43,8 @@ export class CollaboratorDetailsComponent implements OnChanges{
       initDate: new Date(raw.initDate),
       finalDate: new Date(raw.finalDate),
     };
-
-    this.collaboratorEdit.emit(updatedCollaborator);
+    
+    this.collaboratorService.updateCollaborator(updatedCollaborator); // Atualiza no Service
   }
 
   private formatDate(date: Date): string {

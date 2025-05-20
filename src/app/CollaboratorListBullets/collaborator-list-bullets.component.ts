@@ -3,12 +3,12 @@ import { Collaborator } from '../Interfaces/collaboratorInterface';
 import { CollaboratorService } from '../Services/collaboratorService';
 import { CommonModule } from '@angular/common';
 @Component({
-  selector: 'app-collaborator-component',
+  selector: 'app-collaborator-list-bullets',
   imports: [CommonModule],
-  templateUrl:'./collaborator-list.component.html',
-  styleUrls: ['./collaborator-list.component.css']
+  templateUrl: './collaborator-list-bullets.component.html',
+  styleUrl: './collaborator-list-bullets.component.css'
 })
-export class CollaboratorComponentComponent {
+export class CollaboratorListBulletsComponent {
   collaboratorList: Signal<Collaborator[]>;
 
   constructor(private collaboratorService: CollaboratorService) {

@@ -1,31 +1,38 @@
-import { Injectable } from '@angular/core';
-import { Collaborator } from '../collaboratorInterface';
+import { Injectable,signal } from '@angular/core';
+import { Collaborator } from '../Interfaces/collaboratorInterface';
 @Injectable({
   providedIn: 'root'
 })
 export class CollaboratorService {
-  private collaboratortList: Collaborator[] = [
-    {
-        id: 1,
-        userId: 101,
-        initDate: new Date('2023-01-01T00:00:00'),  
-        finalDate: new Date('2023-12-31T23:59:59') 
-      },
-      {
-        id: 2,
-        userId: 102,
-        initDate: new Date('2024-02-01T08:00:00'), 
-        finalDate: new Date('2024-11-30T18:00:00') 
-      },
-      {
-        id: 3,
-        userId: 103,
-        initDate: new Date('2025-05-10T09:00:00'), 
-        finalDate: new Date('2025-12-10T17:00:00') 
-      }
-  ];
+  private collaboratorListSignal = signal<Collaborator[]>([
+    { id: 1, userId: 101, initDate: new Date('2023-01-01'), finalDate: new Date('2023-12-31') },
+    { id: 2, userId: 102, initDate: new Date('2024-02-01'), finalDate: new Date('2024-11-30') },
+    { id: 3, userId: 103, initDate: new Date('2025-05-10'), finalDate: new Date('2025-12-10') }
+  ]);
 
-  getCollaborator(): Collaborator[] {
-    return this.collaboratortList;
+  private selectedCollaboratorSignal = signal<Collaborator | null>(null);
+
+  getCollaboratorSignal() {
+    return this.collaboratorListSignal.asReadonly();
+  }
+
+  getSelectedCollaboratorSignal() {
+    return this.selectedCollaboratorSignal.asReadonly();
+  }
+
+  selectCollaborator(collaborator: Collaborator) {
+    this.selectedCollaboratorSignal.set(collaborator);// como se fosse o emit 
+  }
+
+  updateCollaborator(updatedCollaborator: Collaborator) {
+    const updatedList = this.collaboratorListSignal().map(collaborator =>
+      collaborator.id === updatedCollaborator.id ? updatedCollaborator : collaborator
+    );
+    this.collaboratorListSignal.set(updatedList);
+
+    // Atualiza o colaborador selecionado, caso esteja a ser editado
+    if (this.selectedCollaboratorSignal() && this.selectedCollaboratorSignal()!.id === updatedCollaborator.id) {
+      this.selectedCollaboratorSignal.set(updatedCollaborator);//optional: keep state consistent
+    }
   }
 }

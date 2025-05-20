@@ -1,0 +1,29 @@
+<div>
+    <button (click)="toggleView('project')">Projects</button>
+    <button (click)="toggleView('collaborator')">Collaborators</button>
+    <button (click)="toggleView('holidayPlan')">Holiday Plans</button>
+  </div>
+
+
+  <app-project-list *ngIf="viewType === 'project'" [projectList]="projectList" (projectSelected)="onProjectSelected($event)">
+  </app-project-list>
+
+
+   @if((viewType=='project') &&(selectedProject!=null)){
+    <app-project-details [project]="selectedProject" (projectEdit)="onProjectEdit($event)">
+    </app-project-details>
+   }
+
+  <app-collaborator-component *ngIf="viewType === 'collaborator'"></app-collaborator-component>
+  <app-collaborator-list-bullets *ngIf="viewType === 'collaborator'"></app-collaborator-list-bullets>
+
+  @if((viewType=='collaborator' && selectedCollaborator!=null)){
+  <app-collaborator-details></app-collaborator-details>}
+
+  <app-holiday-plan-list *ngIf="viewType === 'holidayPlan'">
+  </app-holiday-plan-list>
+
+  @if(viewType === 'holidayPlan' && selectedHolidayPlan!=null){
+    <app-holiday-plan-details [holidayPlan]="selectedHolidayPlan" (holidayPlanEdit)="onHolidayPlanEdit($event)">
+    </app-holiday-plan-details>
+}

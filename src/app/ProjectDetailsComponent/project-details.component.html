@@ -1,0 +1,29 @@
+<section class="project-details-section" *ngIf="projectForm">
+    <h2>Project Details</h2>
+
+    <form [formGroup]="projectForm" (ngSubmit)="submitEdit()">
+      <div class="details-box">
+        <label>ID:
+          <input type="number" formControlName="id" />
+        </label>
+
+        <label>Title:
+          <input type="text" formControlName="title" />
+        </label>
+
+        <label>Acronym:
+          <input type="text" formControlName="acronym" />
+        </label>
+
+        <label>Start Date:
+          <input type="date" formControlName="initDate" />
+        </label>
+
+        <label>End Date:
+          <input type="date" formControlName="finalDate" />
+        </label>
+
+        <button type="submit">Save</button>
+      </div>
+    </form>
+  </section>

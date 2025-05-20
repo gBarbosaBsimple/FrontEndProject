@@ -1,0 +1,36 @@
+section {
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  h3 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .bullet-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .bullet {
+    padding: 0.5rem 1rem;
+    background-color: #fff;
+    border-left: 3px solid #dd0b16;
+    color: #444;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .bullet:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .bullet:active {
+    background-color: #ddd;
+  }
+  

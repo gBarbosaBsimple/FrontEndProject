@@ -1,0 +1,24 @@
+<section>
+    <h2>Holiday Plan List</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Collaborator ID</th>
+          <th>lenght of Holiday Period</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let holidayPlan of holidayPlanList">
+          <td>{{ holidayPlan.id }}</td>
+          <td>{{ holidayPlan.collaboratorId }}</td>
+          <td>{{ holidayPlan.holidayPeriod.length }}</td>
+          <td>
+            <button (click)="Details(holidayPlan)">Details</button>
+            <button (click)="viewCollaboratorDetails(holidayPlan.collaboratorId)">Details Collaborator</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>

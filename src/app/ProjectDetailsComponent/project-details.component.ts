@@ -1,42 +1,13 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
-import { Project } from '../projectInterface';
+import { Project } from '../Interfaces/projectInterface';
 import { CommonModule } from '@angular/common';
+import { Validators } from '@angular/forms';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-project-details',
   imports: [CommonModule,ReactiveFormsModule],
-  template: `
-    <section class="project-details-section" *ngIf="projectForm">
-      <h2>Project Details</h2>
-
-      <form [formGroup]="projectForm" (ngSubmit)="submitEdit()">
-        <div class="details-box">
-          <label>ID:
-            <input type="number" formControlName="id" [disabled]="true" />
-          </label>
-
-          <label>Title:
-            <input type="text" formControlName="title" />
-          </label>
-
-          <label>Acronym:
-            <input type="text" formControlName="acronym" />
-          </label>
-
-          <label>Start Date:
-            <input type="date" formControlName="initDate" />
-          </label>
-
-          <label>End Date:
-            <input type="date" formControlName="finalDate" />
-          </label>
-
-          <button type="submit">Save</button>
-        </div>
-      </form>
-    </section>
-  `,
+  templateUrl:'project-details.component.html',
   styleUrls: ['./project-details.component.css']
 })
 export class ProjectDetailsComponent implements OnChanges{
@@ -55,7 +26,7 @@ export class ProjectDetailsComponent implements OnChanges{
   private buildForm(project: Project) {
     this.projectForm = this.fb.group({
       id: [{ value: project.id, disabled: true }], // ← desativa edição do ID
-      title: [project.title],
+      title: [project.title,Validators.required],//quando altero no teste um parametro tenho que fazer o validator
       acronym: [project.acronym],
       initDate: [this.formatDate(project.initDate)],
       finalDate: [this.formatDate(project.finalDate)],
@@ -76,7 +47,7 @@ export class ProjectDetailsComponent implements OnChanges{
     this.projectEdit.emit(updatedProject);
   }
 
-  private formatDate(date: Date): string {
+   formatDate(date: Date): string {
     return new Date(date).toISOString().substring(0, 10);
   }
 }

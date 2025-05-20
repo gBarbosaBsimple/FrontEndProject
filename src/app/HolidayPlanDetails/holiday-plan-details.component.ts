@@ -1,48 +1,13 @@
 import { Component, Input,Output,EventEmitter,OnChanges,SimpleChanges } from '@angular/core';
-import { HolidayPlan } from '../holidayPlanInterface';
-import { HolidayPeriod } from '../holidayPeriodInterface';
+import { HolidayPlan } from '../Interfaces/holidayPlanInterface';
+import { HolidayPeriod } from '../Interfaces/holidayPeriodInterface';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule,FormArray,FormControl, FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-holiday-plan-details',
   imports: [CommonModule,ReactiveFormsModule],
-  template: `
-    <section class="project-details-section" *ngIf="holidayPlanForm">
-  <h2>HolidayPlan Details</h2>
-
-  <form [formGroup]="holidayPlanForm" (ngSubmit)="submitEdit()">
-    <div class="details-box">
-      <label>ID:
-        <input type="number" formControlName="id" [disabled]="true" />
-      </label>
-
-      <label>Collaborator ID:
-        <input type="number" formControlName="collaboratorId" />
-      </label>
-
-      <div formArrayName="holidayPeriod">
-        <h3>Holiday Periods</h3>
-        <div
-          *ngFor="let period of holidayPeriods.controls; let i = index"
-          [formGroupName]="i"
-        >
-          <label>Start Date:
-            <input type="date" formControlName="initDate" />
-          </label>
-
-          <label>End Date:
-            <input type="date" formControlName="finalDate" />
-          </label>
-        </div>
-      </div>
-
-      <!-- Botão fora do *ngFor -->
-      <button type="submit">Save</button>
-    </div>
-  </form>
-</section>
-  `,
+  templateUrl:'./holiday-plan-details.component.html',
   styleUrls: ['./holiday-plan-details.component.css']
 
 })

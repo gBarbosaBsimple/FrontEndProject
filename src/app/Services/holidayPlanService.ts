@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HolidayPlan } from '../holidayPlanInterface';
-import { HolidayPeriod } from '../holidayPeriodInterface';
+import { HolidayPlan } from '../Interfaces/holidayPlanInterface';
+import { HolidayPeriod } from '../Interfaces/holidayPeriodInterface';
 
 @Injectable({
   providedIn: 'root',
