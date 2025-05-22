@@ -1,12 +1,15 @@
-/* import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CollaboratorComponentComponent } from './collaborator-list.component';
-import { Collaborator } from '../collaboratorInterface';
+import { CollaboratorService } from '../Services/collaboratorService';
+import { Collaborator } from '../Interfaces/collaboratorInterface';
 import { By } from '@angular/platform-browser';
-import { DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
+import { signal } from '@angular/core';
 
 describe('CollaboratorComponentComponent', () => {
   let component: CollaboratorComponentComponent;
   let fixture: ComponentFixture<CollaboratorComponentComponent>;
+  let mockService: jasmine.SpyObj<CollaboratorService>;
 
   const mockCollaborators: Collaborator[] = [
     {
@@ -22,23 +25,32 @@ describe('CollaboratorComponentComponent', () => {
       finalDate: new Date('2024-12-31'),
     },
     {
-        id: 3,
-        userId: 102,
-        initDate: new Date('2024-01-01'),
-        finalDate: new Date('2024-12-31'),
-      },
+      id: 3,
+      userId: 103,
+      initDate: new Date('2024-05-01'),
+      finalDate: new Date('2024-12-31'),
+    },
   ];
 
   beforeEach(async () => {
+    mockService = jasmine.createSpyObj<CollaboratorService>('CollaboratorService', [
+      'getCollaboratorSignal',
+      'selectCollaborator'
+    ]);
+
+    mockService.getCollaboratorSignal.and.returnValue(signal(mockCollaborators));
+
     await TestBed.configureTestingModule({
-      imports: [CollaboratorComponentComponent], // Importa o componente
-      providers:[DatePipe],
+      imports: [CommonModule, CollaboratorComponentComponent],
+      providers: [
+        { provide: CollaboratorService, useValue: mockService },
+        DatePipe
+      ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CollaboratorComponentComponent);// é a navegação do html noo component especifico
+    fixture = TestBed.createComponent(CollaboratorComponentComponent);
     component = fixture.componentInstance;
-    component.collaboratorList = mockCollaborators; // Força a lista de colaboradores mockada
-    fixture.detectChanges(); // Atualiza a visualização com os dados mockados
+    fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -46,37 +58,38 @@ describe('CollaboratorComponentComponent', () => {
   });
 
   it('should display a table', () => {
-       const table= fixture.nativeElement.querySelector('table');
-       expect(table).toBeTruthy();//verificar se a tabela existe na interface
+    const table = fixture.nativeElement.querySelector('table');
+    expect(table).toBeTruthy();
+  });
+  it('should render correct number of rows for projects', () => {
+    const rows = fixture.nativeElement.querySelectorAll('tbody tr');
+    expect(rows.length).toBe(mockCollaborators.length);
   });
 
   it('should display collaborator data correctly', () => {
-        const list=fixture.nativeElement.querySelectorAll('tbody tr td');//navegar pelo html
-        expect(list[0].textContent).toBe('1');//textcontent para ir buscar os conteudos de tds
-        expect(list[1].textContent).toBe('101');
-        expect(list[2].textContent).toBe('1/1/23');
-        expect(list[3].textContent).toBe('12/31/23');
+    const cells = fixture.nativeElement.querySelectorAll('tbody tr:first-child td');
+    expect(cells.length).toBe(5); // ID, UserId, Start, End, Actions
+    expect(cells[0].textContent).toContain('1');
+    expect(cells[1].textContent).toContain('101');
+    expect(cells[2].textContent).toContain('1/1/23'); // DatePipe: 'shortDate'
+    expect(cells[3].textContent).toContain('12/31/23');
   });
 
   it('should call Details method when button is clicked', () => {
-    spyOn(component, 'Details'); //emiçao do button
-    const firstButton = fixture.debugElement.query(By.css('table tbody tr:nth-child(1) button'));
-    firstButton.triggerEventHandler('click', null); // Dispara o evento de clique
+    spyOn(component, 'Details');
+    const button = fixture.debugElement.query(By.css('tbody tr:first-child button'));
+    button.triggerEventHandler('click', null);
     expect(component.Details).toHaveBeenCalledWith(mockCollaborators[0]);
   });
 
-  it('should emit collaborator when Details method is called', () => {
-    spyOn(component.collaboratorSelected, 'emit'); 
-
-    const collaborator = mockCollaborators[0];
-    component.Details(collaborator);
-
-    expect(component.collaboratorSelected.emit).toHaveBeenCalledWith(collaborator); 
+  it('should call CollaboratorService.selectCollaborator when Details is called', () => {
+    component.Details(mockCollaborators[1]);
+    expect(mockService.selectCollaborator).toHaveBeenCalledWith(mockCollaborators[1]);
   });
 
-  it('should display "Details" button', () => {
-    const button = fixture.debugElement.query(By.css('table tbody tr:nth-child(1) button'));
-    expect(button.nativeElement.textContent).toBe('Details'); 
+  it('should display "Details" button for each row', () => {
+    const buttons = fixture.debugElement.queryAll(By.css('tbody tr button'));
+    expect(buttons.length).toBe(mockCollaborators.length);
+    expect(buttons[0].nativeElement.textContent).toContain('Details');
   });
 });
- */

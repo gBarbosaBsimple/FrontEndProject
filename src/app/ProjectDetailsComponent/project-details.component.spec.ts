@@ -1,123 +1,150 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { ProjectDetailsComponent } from './project-details.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ProjectService } from '../Services/projectService';
+import { Project } from '../Interfaces/projectInterface';
 import { By } from '@angular/platform-browser';
+import { signal, Signal } from '@angular/core';
+import { WritableSignal } from '@angular/core';
 
 describe('ProjectDetailsComponent', () => {
   let component: ProjectDetailsComponent;
   let fixture: ComponentFixture<ProjectDetailsComponent>;
 
-  const mockProject = {
+  let projectServiceMock: Partial<ProjectService>;//utilizamos as propriedades e metodos que quisermos do serviço
+  let selectedProjectSignal: WritableSignal<Project | null>;
+
+  const testProject: Project = {
     id: 1,
-    title: 'Project Title',
-    acronym: 'PT',
-    initDate: new Date('2024-01-01'),
-    finalDate: new Date('2024-12-31')
+    title: 'Test Project',
+    acronym: 'TP',
+    initDate: new Date('2025-01-01'),
+    finalDate: new Date('2025-12-31'),
   };
 
   beforeEach(async () => {
+    // Inicializa signal com null para começar
+    selectedProjectSignal = signal<Project | null>(null);
+
+    // Mock parcial do serviço, só com getSelectedProject a devolver a signal readonly
+    projectServiceMock = {
+      getSelectedProject: () => selectedProjectSignal.asReadonly(),
+      updateProject: jasmine.createSpy('updateProject')//função fake
+    };
+
     await TestBed.configureTestingModule({
       imports: [ReactiveFormsModule,ProjectDetailsComponent],
-    }).compileComponents();//cria o componente de teste
+      declarations: [],
+      providers: [
+        { provide: ProjectService, useValue: projectServiceMock }
+      ]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ProjectDetailsComponent);
     component = fixture.componentInstance;
-    component.project = mockProject;
-    component.ngOnChanges({
-        project: {
-          currentValue: mockProject,
-          previousValue: null,
-          firstChange: true,
-          isFirstChange: () => true
-        }
-      });
-    fixture.detectChanges();
   });
-  it('should create the section if projectForm is defined', () => {
-    component.projectForm = component['fb'].group({});// cria forum
+
+  // TESTES DO HTML
+  it('should render form with all input fields and a Save button', () => {
+    // Arrange
+    selectedProjectSignal.set(testProject);//da valores
     fixture.detectChanges();
+
+    // Act form controller name- inputs
+    const idInput = fixture.debugElement.query(By.css('input[formControlName="id"]'));
+    const titleInput = fixture.debugElement.query(By.css('input[formControlName="title"]'));
+    const acronymInput = fixture.debugElement.query(By.css('input[formControlName="acronym"]'));
+    const initDateInput = fixture.debugElement.query(By.css('input[formControlName="initDate"]'));
+    const finalDateInput = fixture.debugElement.query(By.css('input[formControlName="finalDate"]'));
+    const saveButton = fixture.debugElement.query(By.css('button[type="submit"]'));
+
+    // Assert: inputs c valores crretos
+    expect(idInput).toBeTruthy();
+    expect(titleInput).toBeTruthy();
+    expect(acronymInput).toBeTruthy();
+    expect(initDateInput).toBeTruthy();
+    expect(finalDateInput).toBeTruthy();
+    expect(saveButton).toBeTruthy();
+
+    expect(idInput.nativeElement.value).toBe(testProject.id.toString());
+    expect(titleInput.nativeElement.value).toBe(testProject.title);
+    expect(acronymInput.nativeElement.value).toBe(testProject.acronym);
+    expect(initDateInput.nativeElement.value).toBe(component.formatDate(testProject.initDate));
+    expect(finalDateInput.nativeElement.value).toBe(component.formatDate(testProject.finalDate));
+  });
+
+  //chatgpt
+  it('should disable the ID input field', () => {
+    selectedProjectSignal.set(testProject);
+    fixture.detectChanges();
+
+    const idInput = fixture.debugElement.query(By.css('input[formControlName="id"]'));
+    expect(idInput.nativeElement.disabled).toBeTrue();
+  });
+
+  // TESTES DOS MÉTODOS DA CLASSE
+  it('constructor', () => {
+    // Arrange
+    expect(component.projectForm).toBeUndefined();
+
+    // Act
+    selectedProjectSignal.set(testProject);
+    fixture.detectChanges();
+
+    // Assert
+    expect(component.projectForm).toBeTruthy();
+    expect(component.projectForm.get('title')?.value).toBe(testProject.title);
+  });
+
+  it('should build form correctly when a project is selected', () => {
+    // Arrange + Act
+    component['buildForm'](testProject);
+
+    // Assert
+    expect(component.projectForm).toBeTruthy();
+    expect(component.projectForm.getRawValue().id).toBe(testProject.id);
+    expect(component.projectForm.get('title')?.value).toBe(testProject.title);
+    expect(component.projectForm.get('acronym')?.value).toBe(testProject.acronym);
+    expect(component.projectForm.get('initDate')?.value).toBe(component.formatDate(testProject.initDate));
+    expect(component.projectForm.get('finalDate')?.value).toBe(component.formatDate(testProject.finalDate));
+  });
+
+  it('should formatDate return correct string format', () => {
+    const date = new Date('2025-12-31');
+    const formatted = component.formatDate(date);
+    expect(formatted).toBe('2025-12-31');
+  });
+
   
-    const section = fixture.debugElement.query(By.css('.project-details-section'));
-    expect(section).toBeTruthy(); 
-  });
-
-
-  it('should create the form with project data and disable ID input', () => {
-    expect(component.projectForm).toBeDefined();//forum criado? top
-
-    const idInput = fixture.debugElement.query(By.css('input[formControlName="id"]')).nativeElement;
-    expect(idInput.disabled).toBeTrue();  
-    expect(idInput.value).toBe(mockProject.id.toString());
-
-    const titleInput = fixture.debugElement.query(By.css('input[formControlName="title"]')).nativeElement;
-    expect(titleInput.value).toBe(mockProject.title); 
-
-    const acronymInput = fixture.debugElement.query(By.css('input[formControlName="acronym"]')).nativeElement;
-    expect(acronymInput.value).toBe(mockProject.acronym); 
-
-    const initDateInput = fixture.debugElement.query(By.css('input[formControlName="initDate"]')).nativeElement;
-    expect(initDateInput.value).toBe(component.formatDate(mockProject.initDate));
-
-    const finalDateInput = fixture.debugElement.query(By.css('input[formControlName="finalDate"]')).nativeElement;
-    expect(finalDateInput.value).toBe(component.formatDate(mockProject.finalDate)); 
-  });//nativeelement é o valor real no html original
-
-  it('should update form control when input value changes', () => {
-    const titleInput = fixture.debugElement.query(By.css('input[formControlName="title"]')).nativeElement;
-    titleInput.value = 'New Project Title';
-    titleInput.dispatchEvent(new Event('input')); 
+  it('should call updateProject on submitEdit when form is valid', () => {
+    // Arrange
+    component['buildForm'](testProject);
     fixture.detectChanges();
 
-    expect(component.projectForm.controls['title'].value).toBe('New Project Title');
+    component.projectForm.get('title')?.setValue('Updated Title');
+    component.projectForm.get('initDate')?.setValue('2025-01-10');
+    component.projectForm.get('finalDate')?.setValue('2025-12-25');
+
+    // Act
+    component.submitEdit();
+
+    // Assert
+    expect(projectServiceMock.updateProject).toHaveBeenCalledTimes(1);
+    const updatedArg = (projectServiceMock.updateProject as jasmine.Spy).calls.mostRecent().args[0];
+   // expect(testProject.title).toBe('Updated Title');
+    expect(updatedArg.initDate).toEqual(new Date('2025-01-10'));
+    expect(updatedArg.finalDate).toEqual(new Date('2025-12-25'));
   });
 
-  it('should have a submit button in the form', () => {
-    const button = fixture.debugElement.query(By.css('button[type="submit"]'));
-    expect(button).toBeTruthy(); 
-    expect(button.nativeElement.textContent).toContain('Save'); 
-  });
+  it('should not call updateProject if form is invalid', () => {
+    // Arrange
+    component['buildForm'](testProject);
+    component.projectForm.get('title')?.setValue(''); // Title is required -> invalid form
 
-  it('should emit projectEdit event with updated data on form submit', () => {
-    spyOn(component.projectEdit, 'emit');
+    // Act
+    component.submitEdit();
 
-    component.projectForm.controls['title'].setValue('Updated Title');
-    component.projectForm.controls['acronym'].setValue('UT');
-    component.projectForm.controls['initDate'].setValue('2024-02-01');
-    component.projectForm.controls['finalDate'].setValue('2024-11-30');
-
-    // Simula submit do formulário
-    const form = fixture.debugElement.query(By.css('form'));
-    form.triggerEventHandler('ngSubmit', {});
-    fixture.detectChanges();
-
-    expect(component.projectEdit.emit).toHaveBeenCalledWith({
-      id: mockProject.id,            
-      title: 'Updated Title',          
-      acronym: 'UT',                   
-      initDate: new Date('2024-02-01'),
-      finalDate: new Date('2024-11-30') 
-    });
-  });
-
-  it('should not emit event if form is invalid', () => {
-    spyOn(component.projectEdit, 'emit');
-
-    component.projectForm.controls['title'].setValue('');
-    fixture.detectChanges();
-
-    const form = fixture.debugElement.query(By.css('form'));
-    form.triggerEventHandler('ngSubmit', {});
-    fixture.detectChanges();
-
-    expect(component.projectEdit.emit).not.toHaveBeenCalled();
-  });
-
-  it('should not display the form if project input is null', () => {
-    component.project = null;
-    component.projectForm = undefined!;
-    fixture.detectChanges();
-
-    const section = fixture.debugElement.query(By.css('.project-details-section'));
-    expect(section).toBeNull(); 
+    // Assert
+    expect(projectServiceMock.updateProject).not.toHaveBeenCalled();
   });
 });

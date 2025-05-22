@@ -3,18 +3,19 @@ import { Project } from '../Interfaces/projectInterface';
 import { ProjectService } from '../Services/projectService';
 import { CommonModule } from '@angular/common';
 @Component({
-  selector: 'app-project-list',
+  selector: 'app-project-list-bullets',
   imports: [CommonModule],
-  templateUrl:'./project-list.component.html',
-  styleUrls: ['./project-list.component.css']
+  templateUrl: './project-list-bullets.component.html',
+  styleUrl: './project-list-bullets.component.css'
 })
-export class ProjectListComponent {
-  projectList:Signal<Project[]> ;
-
-  constructor(private projectService: ProjectService){
+export class ProjectListBulletsComponent {
+  projectList: Signal<Project[]>;
+  
+  constructor(private projectService:ProjectService ){
     this.projectList= this.projectService.getProjects();
   }
+
   Details(project:Project){
-    this.projectService.selectProject(project);//event para dar seguimento ao event emitter output
+    this.projectService.selectProject(project);
   }
 }

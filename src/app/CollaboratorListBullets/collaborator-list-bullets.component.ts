@@ -1,4 +1,4 @@
-import { Component,Output, Input,EventEmitter,signal, Signal } from '@angular/core';
+import { Component, Signal } from '@angular/core';
 import { Collaborator } from '../Interfaces/collaboratorInterface';
 import { CollaboratorService } from '../Services/collaboratorService';
 import { CommonModule } from '@angular/common';

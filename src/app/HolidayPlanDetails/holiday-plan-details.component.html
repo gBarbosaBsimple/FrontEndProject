@@ -4,7 +4,7 @@
     <form [formGroup]="holidayPlanForm" (ngSubmit)="submitEdit()">
       <div class="details-box">
         <label>ID:
-          <input type="number" formControlName="id" [disabled]="true" />
+          <input type="number" formControlName="id"  />
         </label>
   
         <label>Collaborator ID:
@@ -26,6 +26,7 @@
             </label>
           </div>
         </div>
+        <button type="button" (click)="addHolidayPeriod()">Create Holiday Period</button>
   
         <!-- Botão fora do *ngFor -->
         <button type="submit">Save</button>

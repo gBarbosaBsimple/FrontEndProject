@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges,effect
 import { Collaborator } from '../Interfaces/collaboratorInterface';
 import { CollaboratorService } from '../Services/collaboratorService';
 import { CommonModule } from '@angular/common';
+import { Validators } from '@angular/forms';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
@@ -27,9 +28,9 @@ export class CollaboratorDetailsComponent{
   private buildForm(collaborator: Collaborator) {
     this.collaboratorForm = this.fb.group({
       id: [{ value: collaborator.id, disabled: true }], //desativa ID
-      userId: [collaborator.userId],
-      initDate: [this.formatDate(collaborator.initDate)],
-      finalDate: [this.formatDate(collaborator.finalDate)],
+      userId: [collaborator.userId,Validators.required],
+      initDate: [this.formatDate(collaborator.initDate),Validators.required],
+      finalDate: [this.formatDate(collaborator.finalDate),Validators.required],
     });
   }
 

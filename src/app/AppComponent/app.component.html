@@ -4,26 +4,24 @@
     <button (click)="toggleView('holidayPlan')">Holiday Plans</button>
   </div>
 
+  <app-project-list *ngIf="viewType === 'project'"></app-project-list>
+  <app-project-list-bullets *ngIf="viewType === 'project'"></app-project-list-bullets>
 
-  <app-project-list *ngIf="viewType === 'project'" [projectList]="projectList" (projectSelected)="onProjectSelected($event)">
-  </app-project-list>
 
-
-   @if((viewType=='project') &&(selectedProject!=null)){
-    <app-project-details [project]="selectedProject" (projectEdit)="onProjectEdit($event)">
-    </app-project-details>
+   @if((viewType=='project')){
+    <app-project-details></app-project-details>
    }
 
   <app-collaborator-component *ngIf="viewType === 'collaborator'"></app-collaborator-component>
   <app-collaborator-list-bullets *ngIf="viewType === 'collaborator'"></app-collaborator-list-bullets>
 
-  @if((viewType=='collaborator' && selectedCollaborator!=null)){
+  @if((viewType=='collaborator' )){
   <app-collaborator-details></app-collaborator-details>}
 
-  <app-holiday-plan-list *ngIf="viewType === 'holidayPlan'">
-  </app-holiday-plan-list>
+  <app-holiday-plan-list *ngIf="viewType === 'holidayPlan'"></app-holiday-plan-list>
+  <app-holiday-plan-list-bullets *ngIf="viewType === 'holidayPlan'"></app-holiday-plan-list-bullets>
 
-  @if(viewType === 'holidayPlan' && selectedHolidayPlan!=null){
-    <app-holiday-plan-details [holidayPlan]="selectedHolidayPlan" (holidayPlanEdit)="onHolidayPlanEdit($event)">
-    </app-holiday-plan-details>
+
+  @if(viewType === 'holidayPlan'){
+    <app-holiday-plan-details></app-holiday-plan-details>
 }

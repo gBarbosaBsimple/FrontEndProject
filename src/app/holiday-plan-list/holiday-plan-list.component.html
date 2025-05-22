@@ -10,13 +10,12 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let holidayPlan of holidayPlanList">
+        <tr *ngFor="let holidayPlan of holidayPlanList()">
           <td>{{ holidayPlan.id }}</td>
           <td>{{ holidayPlan.collaboratorId }}</td>
           <td>{{ holidayPlan.holidayPeriod.length }}</td>
           <td>
             <button (click)="Details(holidayPlan)">Details</button>
-            <button (click)="viewCollaboratorDetails(holidayPlan.collaboratorId)">Details Collaborator</button>
           </td>
         </tr>
       </tbody>

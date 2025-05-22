@@ -1,11 +1,11 @@
 <section class="collaborator-bullets">
     <h3>Collaborator List (Bullets)</h3>
-    <div class="bullet-container">
-      <div 
+    <ul class="bullet-container">
+      <li 
         *ngFor="let collaborator of collaboratorList()" 
         class="bullet"
         (click)="Details(collaborator)">
-        . {{ collaborator.id }}, {{ collaborator.userId }}
-      </div>
-    </div>
+        {{ collaborator.id }}, {{ collaborator.userId }}
+      </li>
+    </ul>
   </section>

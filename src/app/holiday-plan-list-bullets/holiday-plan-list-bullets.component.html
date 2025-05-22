@@ -1,0 +1,11 @@
+<section class="holiday-Plan-List-bullets">
+    <h3>HolidayPlan List (Bullets)</h3>
+    <div class="bullet-container">
+      <div 
+        *ngFor="let holidayPlan of holidayPlanList()" 
+        class="bullet"
+        (click)="Details(holidayPlan)">
+        . {{ holidayPlan.id }}, {{ holidayPlan.collaboratorId }}
+      </div>
+    </div>
+  </section>

@@ -1,35 +1,34 @@
-import { Component,Signal,signal,effect } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { Project } from '../Interfaces/projectInterface';
-import { Collaborator } from '../Interfaces/collaboratorInterface';
-import { Subscription } from 'rxjs';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { Component,effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Project } from '../Interfaces/projectInterface';
 import { ProjectDetailsComponent } from '../ProjectDetailsComponent/project-details.component';
 import { ProjectListComponent } from '../ProjectComponent/project-list.component';
+import { ProjectService } from '../Services/projectService';
+import { ProjectListBulletsComponent } from '../project-list-bullets/project-list-bullets.component';
+import { Collaborator } from '../Interfaces/collaboratorInterface';
 import { CollaboratorDetailsComponent } from '../CollaboratorDetails/collaborator-details.component';
 import { CollaboratorComponentComponent } from '../CollaboratorComponent/collaborator-list.component';
 import { CollaboratorListBulletsComponent } from '../CollaboratorListBullets/collaborator-list-bullets.component';
-import { ProjectService } from '../Services/projectService';
 import { CollaboratorService } from '../Services/collaboratorService';
 import { HolidayPlan } from '../Interfaces/holidayPlanInterface';
-import { HolidayPeriod } from '../Interfaces/holidayPeriodInterface';
 import { HolidayPlanService } from '../Services/holidayPlanService';
 import { HolidayPlanListComponent } from '../holiday-plan-list/holiday-plan-list.component';
 import { HolidayPlanDetailsComponent } from '../HolidayPlanDetails/holiday-plan-details.component';
-import { FormsModule } from '@angular/forms';
-
+import { HolidayPlanListBulletsComponent } from '../holiday-plan-list-bullets/holiday-plan-list-bullets.component';
 @Component({
   selector: 'app-root',
   imports: [
     CommonModule,
     ProjectDetailsComponent,
     ProjectListComponent,
+    ProjectListBulletsComponent,
     CollaboratorDetailsComponent,
     CollaboratorListBulletsComponent,
     CollaboratorComponentComponent,
     HolidayPlanListComponent,
     HolidayPlanDetailsComponent,
+    HolidayPlanListBulletsComponent,
     FormsModule
   ],
   standalone: true,
@@ -40,8 +39,6 @@ export class AppComponent {
   selectedProject: Project | null = null;
   selectedCollaborator: Collaborator | null = null;
   selectedHolidayPlan: HolidayPlan | null = null;
-  projectList: Project[] = [];
-  holidayPlanList: HolidayPlan[] = [];
   viewType: 'project' | 'collaborator' |'holidayPlan' = 'project'; 
 
   constructor(
@@ -49,13 +46,14 @@ export class AppComponent {
     private collaboratorService: CollaboratorService,
     private holidayPlanService: HolidayPlanService
   ) {
-    
-    this.projectList = this.projectService.getProjects();
-    this.holidayPlanList = this.holidayPlanService.getHolidayPlans();
     effect(() => {
       const collaborator = this.collaboratorService.getSelectedCollaboratorSignal()();
-    
-      this.selectedCollaborator = collaborator ? collaborator : null;    });
+      const project = this.projectService.getSelectedProject()();
+      const holidayPlan= this.holidayPlanService.getSelectedHolidayPlan()();
+
+      this.selectedCollaborator = collaborator ? collaborator : null;
+      this.selectedProject = project ? project : null; 
+      this.selectedHolidayPlan=holidayPlan ? holidayPlan: null; });
   }
 
   toggleView(view: 'project' | 'collaborator'|'holidayPlan'): void {
@@ -64,25 +62,4 @@ export class AppComponent {
     this.selectedCollaborator=null; 
     this.selectedHolidayPlan = null;
     }
-
-  onHolidayPlanSelected(plan: HolidayPlan) {
-    this.selectedHolidayPlan = plan;
-  }
-  onHolidayPlanEdit(updatedPlan: HolidayPlan) {
-    const index = this.holidayPlanList.findIndex(p => p.id === updatedPlan.id);
-    if (index !== -1) {
-      this.holidayPlanList[index] = { ...updatedPlan };
-      this.selectedHolidayPlan = this.holidayPlanList[index];
-    }}
-  
-  onProjectSelected(project: Project) {
-    this.selectedProject = project;
-  }
-  onProjectEdit(updatedProject: Project) {
-    const index = this.projectList.findIndex((p) => p.id === updatedProject.id);
-    if (index !== -1) {
-      this.projectList[index] = { ...updatedProject };
-      this.selectedProject = this.projectList[index];
-    }
-  }
 }

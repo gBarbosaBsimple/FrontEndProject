@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, effect } from '@angular/core';
 import { Project } from '../Interfaces/projectInterface';
+import { ProjectService } from '../Services/projectService';
 import { CommonModule } from '@angular/common';
 import { Validators } from '@angular/forms';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
@@ -10,26 +11,26 @@ import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
   templateUrl:'project-details.component.html',
   styleUrls: ['./project-details.component.css']
 })
-export class ProjectDetailsComponent implements OnChanges{
-  @Input() project:Project|null=null
-  @Output() projectEdit= new EventEmitter<Project>();
+export class ProjectDetailsComponent{
   projectForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['project'] && this.project) {
-      this.buildForm(this.project);
-    }
+  constructor(private fb: FormBuilder,private projectService:ProjectService) {
+    effect(()=>{ 
+      const project= this.projectService.getSelectedProject()();
+      if(project){
+        this.buildForm(project);
+      }
+    });
   }
+
 
   private buildForm(project: Project) {
     this.projectForm = this.fb.group({
-      id: [{ value: project.id, disabled: true }], // ← desativa edição do ID
+      id: [{ value: project.id, disabled: true }], // ← desativa ID
       title: [project.title,Validators.required],//quando altero no teste um parametro tenho que fazer o validator
-      acronym: [project.acronym],
-      initDate: [this.formatDate(project.initDate)],
-      finalDate: [this.formatDate(project.finalDate)],
+      acronym: [project.acronym,Validators.required],
+      initDate: [this.formatDate(project.initDate),Validators.required],
+      finalDate: [this.formatDate(project.finalDate),Validators.required],
     });
   }
 
@@ -44,7 +45,7 @@ export class ProjectDetailsComponent implements OnChanges{
       finalDate: new Date(raw.finalDate),
     };
 
-    this.projectEdit.emit(updatedProject);
+    this.projectService.updateProject(updatedProject);
   }
 
    formatDate(date: Date): string {

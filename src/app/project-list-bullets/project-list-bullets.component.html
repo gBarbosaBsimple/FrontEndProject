@@ -1,0 +1,12 @@
+<section class="collaborator-bullets">
+    <h3>Project List (Bullets)</h3>
+    <ul class="bullet-container">
+      <li 
+        *ngFor="let project of projectList()" 
+        (click)="Details(project)" 
+        class="bullet-item">
+        {{ project.id }}, {{ project.title }}, {{ project.acronym }}
+      </li>
+    </ul>
+  </section>
+  
